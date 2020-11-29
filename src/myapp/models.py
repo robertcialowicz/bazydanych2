@@ -50,6 +50,7 @@ class Customers(models.Model):
     country = models.CharField(db_column='Country', max_length=15, blank=True, null=True)  # Field name made lowercase.
     phone = models.CharField(db_column='Phone', max_length=24, blank=True, null=True)  # Field name made lowercase.
     fax = models.CharField(db_column='Fax', max_length=24, blank=True, null=True)  # Field name made lowercase.
+    customer_customer_demo = models.ManyToManyField(CustomerDemographics,verbose_name=_('Customer customer demo'),db_table='CustomerCustomerDemo',blank=True)
 
     class Meta:
         managed = False
@@ -85,6 +86,8 @@ class Employees(models.Model):
     notes = models.TextField(db_column='Notes', blank=True, null=True)  # Field name made lowercase.
     reportsto = models.ForeignKey('self', models.DO_NOTHING, db_column='ReportsTo', blank=True, null=True)  # Field name made lowercase.
     photopath = models.CharField(db_column='PhotoPath', max_length=255, blank=True, null=True)  # Field name made lowercase.
+    territories = models.ManyToManyField(Territories,verbose_name=_('Territories'),db_table='EmployeeTerritories',blank=True)
+
 
     class Meta:
         managed = False
@@ -97,6 +100,7 @@ class OrderDetails(models.Model):
     unitprice = models.DecimalField(db_column='UnitPrice', max_digits=19, decimal_places=4)  # Field name made lowercase.
     quantity = models.SmallIntegerField(db_column='Quantity')  # Field name made lowercase.
     discount = models.FloatField(db_column='Discount')  # Field name made lowercase.
+
 
     class Meta:
         managed = False
@@ -119,6 +123,7 @@ class Orders(models.Model):
     shipregion = models.CharField(db_column='ShipRegion', max_length=15, blank=True, null=True)  # Field name made lowercase.
     shippostalcode = models.CharField(db_column='ShipPostalCode', max_length=10, blank=True, null=True)  # Field name made lowercase.
     shipcountry = models.CharField(db_column='ShipCountry', max_length=15, blank=True, null=True)  # Field name made lowercase.
+    order_details = models.ManyToManyField(Products,verbose_name=_('Products'),blank=True,through='OrderDetails')
 
     class Meta:
         managed = False
