@@ -26,4 +26,7 @@ RUN ln -sfn /opt/mssql-tools/bin/bcp /usr/bin/bcp
 RUN pip install -r /code/requirements.txt
 COPY . /code/
 
+CMD python manage.py migrate
+CMD python manage.py createsuperuser --username admin --password admin --noinput --email 'admin@email.com'
+
 CMD python /code/test.py
