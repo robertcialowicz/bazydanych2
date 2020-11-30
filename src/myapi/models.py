@@ -1,10 +1,7 @@
-# This is an auto-generated Django model module.
-# You'll have to do the following manually to clean this up:
-#   * Rearrange models' order
-#   * Make sure each model has one field with primary_key=True
-#   * Make sure each ForeignKey has `on_delete` set to the desired behavior.
-#   * Remove `managed = False` lines if you wish to allow Django to create, modify, and delete the table
-# Feel free to rename the models, but don't rename db_table values or field names.
+from django.db import models
+
+# Create your models here.
+
 from django.db import models
 
 
@@ -29,7 +26,7 @@ class Customercustomerdemo(models.Model):
         unique_together = (('customerid', 'customertypeid'),)
 
 
-class Customerdemographics(models.Model):
+class CustomerDemographics(models.Model):
     customertypeid = models.CharField(db_column='CustomerTypeID', primary_key=True, max_length=10)  # Field name made lowercase.
     customerdesc = models.TextField(db_column='CustomerDesc', blank=True, null=True)  # Field name made lowercase.
 
@@ -50,6 +47,7 @@ class Customers(models.Model):
     country = models.CharField(db_column='Country', max_length=15, blank=True, null=True)  # Field name made lowercase.
     phone = models.CharField(db_column='Phone', max_length=24, blank=True, null=True)  # Field name made lowercase.
     fax = models.CharField(db_column='Fax', max_length=24, blank=True, null=True)  # Field name made lowercase.
+    customer_customer_demo = models.ManyToManyField(CustomerDemographics)
 
     class Meta:
         managed = False
@@ -65,6 +63,23 @@ class Employeeterritories(models.Model):
         db_table = 'EmployeeTerritories'
         unique_together = (('employeeid', 'territoryid'),)
 
+class Region(models.Model):
+    regionid = models.IntegerField(db_column='RegionID', primary_key=True)  # Field name made lowercase.
+    regiondescription = models.CharField(db_column='RegionDescription', max_length=50)  # Field name made lowercase.
+
+    class Meta:
+        managed = False
+        db_table = 'Region'
+
+
+class Territories(models.Model):
+    territoryid = models.CharField(db_column='TerritoryID', primary_key=True, max_length=20)  # Field name made lowercase.
+    territorydescription = models.CharField(db_column='TerritoryDescription', max_length=50)  # Field name made lowercase.
+    regionid = models.ForeignKey(Region, models.DO_NOTHING, db_column='RegionID')  # Field name made lowercase.
+
+    class Meta:
+        managed = False
+        db_table = 'Territories'
 
 class Employees(models.Model):
     employeeid = models.AutoField(db_column='EmployeeID', primary_key=True)  # Field name made lowercase.
@@ -85,6 +100,8 @@ class Employees(models.Model):
     notes = models.TextField(db_column='Notes', blank=True, null=True)  # Field name made lowercase.
     reportsto = models.ForeignKey('self', models.DO_NOTHING, db_column='ReportsTo', blank=True, null=True)  # Field name made lowercase.
     photopath = models.CharField(db_column='PhotoPath', max_length=255, blank=True, null=True)  # Field name made lowercase.
+    territories = models.ManyToManyField(Territories)
+
 
     class Meta:
         managed = False
@@ -98,32 +115,11 @@ class OrderDetails(models.Model):
     quantity = models.SmallIntegerField(db_column='Quantity')  # Field name made lowercase.
     discount = models.FloatField(db_column='Discount')  # Field name made lowercase.
 
+
     class Meta:
         managed = False
         db_table = 'Order Details'
         unique_together = (('orderid', 'productid'),)
-
-
-class Orders(models.Model):
-    orderid = models.AutoField(db_column='OrderID', primary_key=True)  # Field name made lowercase.
-    customerid = models.ForeignKey(Customers, models.DO_NOTHING, db_column='CustomerID', blank=True, null=True)  # Field name made lowercase.
-    employeeid = models.ForeignKey(Employees, models.DO_NOTHING, db_column='EmployeeID', blank=True, null=True)  # Field name made lowercase.
-    orderdate = models.DateTimeField(db_column='OrderDate', blank=True, null=True)  # Field name made lowercase.
-    requireddate = models.DateTimeField(db_column='RequiredDate', blank=True, null=True)  # Field name made lowercase.
-    shippeddate = models.DateTimeField(db_column='ShippedDate', blank=True, null=True)  # Field name made lowercase.
-    shipvia = models.ForeignKey('Shippers', models.DO_NOTHING, db_column='ShipVia', blank=True, null=True)  # Field name made lowercase.
-    freight = models.DecimalField(db_column='Freight', max_digits=19, decimal_places=4, blank=True, null=True)  # Field name made lowercase.
-    shipname = models.CharField(db_column='ShipName', max_length=40, blank=True, null=True)  # Field name made lowercase.
-    shipaddress = models.CharField(db_column='ShipAddress', max_length=60, blank=True, null=True)  # Field name made lowercase.
-    shipcity = models.CharField(db_column='ShipCity', max_length=15, blank=True, null=True)  # Field name made lowercase.
-    shipregion = models.CharField(db_column='ShipRegion', max_length=15, blank=True, null=True)  # Field name made lowercase.
-    shippostalcode = models.CharField(db_column='ShipPostalCode', max_length=10, blank=True, null=True)  # Field name made lowercase.
-    shipcountry = models.CharField(db_column='ShipCountry', max_length=15, blank=True, null=True)  # Field name made lowercase.
-
-    class Meta:
-        managed = False
-        db_table = 'Orders'
-
 
 class Products(models.Model):
     productid = models.AutoField(db_column='ProductID', primary_key=True)  # Field name made lowercase.
@@ -142,13 +138,31 @@ class Products(models.Model):
         db_table = 'Products'
 
 
-class Region(models.Model):
-    regionid = models.IntegerField(db_column='RegionID', primary_key=True)  # Field name made lowercase.
-    regiondescription = models.CharField(db_column='RegionDescription', max_length=50)  # Field name made lowercase.
+
+class Orders(models.Model):
+    orderid = models.AutoField(db_column='OrderID', primary_key=True)  # Field name made lowercase.
+    customerid = models.ForeignKey(Customers, models.DO_NOTHING, db_column='CustomerID', blank=True, null=True)  # Field name made lowercase.
+    employeeid = models.ForeignKey(Employees, models.DO_NOTHING, db_column='EmployeeID', blank=True, null=True)  # Field name made lowercase.
+    orderdate = models.DateTimeField(db_column='OrderDate', blank=True, null=True)  # Field name made lowercase.
+    requireddate = models.DateTimeField(db_column='RequiredDate', blank=True, null=True)  # Field name made lowercase.
+    shippeddate = models.DateTimeField(db_column='ShippedDate', blank=True, null=True)  # Field name made lowercase.
+    shipvia = models.ForeignKey('Shippers', models.DO_NOTHING, db_column='ShipVia', blank=True, null=True)  # Field name made lowercase.
+    freight = models.DecimalField(db_column='Freight', max_digits=19, decimal_places=4, blank=True, null=True)  # Field name made lowercase.
+    shipname = models.CharField(db_column='ShipName', max_length=40, blank=True, null=True)  # Field name made lowercase.
+    shipaddress = models.CharField(db_column='ShipAddress', max_length=60, blank=True, null=True)  # Field name made lowercase.
+    shipcity = models.CharField(db_column='ShipCity', max_length=15, blank=True, null=True)  # Field name made lowercase.
+    shipregion = models.CharField(db_column='ShipRegion', max_length=15, blank=True, null=True)  # Field name made lowercase.
+    shippostalcode = models.CharField(db_column='ShipPostalCode', max_length=10, blank=True, null=True)  # Field name made lowercase.
+    shipcountry = models.CharField(db_column='ShipCountry', max_length=15, blank=True, null=True)  # Field name made lowercase.
+    order_details = models.ManyToManyField(Products)
 
     class Meta:
         managed = False
-        db_table = 'Region'
+        db_table = 'Orders'
+
+
+
+
 
 
 class Shippers(models.Model):
@@ -180,14 +194,7 @@ class Suppliers(models.Model):
         db_table = 'Suppliers'
 
 
-class Territories(models.Model):
-    territoryid = models.CharField(db_column='TerritoryID', primary_key=True, max_length=20)  # Field name made lowercase.
-    territorydescription = models.CharField(db_column='TerritoryDescription', max_length=50)  # Field name made lowercase.
-    regionid = models.ForeignKey(Region, models.DO_NOTHING, db_column='RegionID')  # Field name made lowercase.
 
-    class Meta:
-        managed = False
-        db_table = 'Territories'
 
 
 class AuthGroup(models.Model):
@@ -290,10 +297,11 @@ class DjangoMigrations(models.Model):
         db_table = 'django_migrations'
 
 
-class MyapiHero(models.Model):
-    name = models.CharField(max_length=60)
-    alias = models.CharField(max_length=60)
+class DjangoSession(models.Model):
+    session_key = models.CharField(primary_key=True, max_length=40)
+    session_data = models.TextField()
+    expire_date = models.DateTimeField()
 
     class Meta:
         managed = False
-        db_table = 'myapi_hero'
+        db_table = 'django_session'
