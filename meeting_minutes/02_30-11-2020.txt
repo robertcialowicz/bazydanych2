@@ -1,0 +1,6 @@
+Teams (30-11-2020 20:00):
+ - CRUD operations to be implemented discussed
+ - fixed docker-compose file and Dockerfiles
+ - models from datamodel registered
+ - 1st revision merged to main branch
+
