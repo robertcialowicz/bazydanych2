@@ -10,6 +10,9 @@ class CategoriesSerializer(serializers.HyperlinkedModelSerializer):
         model = Categories
         fields = ('categoryid', 'categoryname','description','picture')
 
+        def create(self, validated_data):
+            return Categories.objects.create(**validated_data)
+
 class ProductsSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Products
