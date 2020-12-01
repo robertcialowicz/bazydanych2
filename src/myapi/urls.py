@@ -5,6 +5,8 @@ from django.urls import include, path
 #from . import views
 
 from .views import CategoriesView
+from .views import SuppliersView
+from .views import ProductsView
 
 
 app_name = "myapi"
@@ -18,7 +20,11 @@ app_name = "myapi"
 # Additionally, we include login URLs for the browsable API.
 urlpatterns = [
     path('Categories/', CategoriesView.as_view()),
-    path('Categories/<int:pk>', CategoriesView.as_view())
+    path('Categories/<int:pk>', CategoriesView.as_view()),
+    path('Suppliers/', SuppliersView.as_view()),
+    path('Suppliers/<int:pk>', SuppliersView.as_view()),
+    path('Products/', ProductsView.as_view()),
+    path('Products/<int:pk>', ProductsView.as_view())
     #path('', include(router.urls)),
     #path('api-auth/', include('rest_framework.urls', namespace='rest_framework'))
 ]
