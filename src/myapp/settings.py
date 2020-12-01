@@ -28,6 +28,7 @@ DEBUG = True
 ALLOWED_HOSTS = [
     '10.71.131.95',
     '0.0.0.0',
+    'localhost',
     ]
 
 # Application definition
@@ -40,6 +41,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'myapi.apps.MyapiConfig',
+    'rest_framework',
 ]
 
 MIDDLEWARE = [
