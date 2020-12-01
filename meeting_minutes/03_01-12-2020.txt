@@ -1,0 +1,10 @@
+Teams (01-12-2020 20:00):
+ - enabler for get for only one element
+ - delete issue fixed
+ - CRUD fully implemented and working on Suppliers
+ - CRUD fully implemented and working on Categories
+ - __str__ methods added to classes Supplier, Product and Cateogry - for better view when using /admin page
+
+ - known issue: create and update on Product - serialization problem
+
+ - follow-up on 02-12-2020 19:00 via Teams
