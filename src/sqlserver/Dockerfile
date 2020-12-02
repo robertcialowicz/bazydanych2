@@ -22,4 +22,5 @@ ARG NORTHWIND_SQL_GITHUB="https://raw.githubusercontent.com/Microsoft/sql-server
 ARG NORTHWIND_SQL="/usr/share/instnwnd.sql"
 RUN wget "${NORTHWIND_SQL_GITHUB}" -O "${NORTHWIND_SQL}"
 ADD entrypoint.sh /usr/share/entrypoint.sh
+ADD import-northwind.sh /usr/share/import-northwind.sh
 ENTRYPOINT [ "/usr/share/entrypoint.sh" ]

@@ -3,6 +3,8 @@ version: '3'
 services:
   sqlserver:
     build: sqlserver
+    volumes:
+      - ./sql-server-data:/var/opt/mssql
     ports:
       - "1433:1433"
   web:

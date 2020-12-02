@@ -1,4 +1,7 @@
 #!/bin/bash
 
-sleep 30 && sqlcmd -S localhost -U SA -P Sasin70mln -i /usr/share/instnwnd.sql &
-/opt/mssql/bin/sqlservr
+/opt/mssql/bin/sqlservr &
+
+sleep 10 && /usr/share/import-northwind.sh
+
+tail -f /dev/random &> /dev/null
