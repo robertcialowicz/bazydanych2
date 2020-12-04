@@ -122,11 +122,13 @@ class ProductsView(APIView):
 
     def post(self, request):
         product = request.data.get('product')
+        supplier = get_object_or_404(Suppliers, supplierid=product.get('supplierid'))
+        category = get_object_or_404(Categories, categoryid=product.get('categoryid'))
 
         # Create a supplier from the above data
         serializer = ProductsSerializer(data=product)
         if serializer.is_valid(raise_exception=True):
-            product_saved = serializer.save()
+            product_saved = serializer.save(categoryid=category, supplierid=supplier)
         return Response({"success": "product '{}' created successfully".format(product_saved.productname)})
 
     def update(self, instance, validated_data):
