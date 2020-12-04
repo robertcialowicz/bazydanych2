@@ -85,7 +85,7 @@ DATABASES = {
         'HOST': 'sqlserver',
         'PORT': 1433,
         'USER': 'SA',
-        'PASSWORD': 'Sasin70mln',
+        'PASSWORD': 'P@ssword1',
         'OPTIONS': {
             'driver': 'ODBC Driver 17 for SQL Server',
         },

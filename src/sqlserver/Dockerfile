@@ -5,7 +5,7 @@ FROM mcr.microsoft.com/mssql/server:2019-latest
 # Configure SQL Server #
 ########################
 
-ARG SQL_PASSWD="Sasin70mln"
+ARG SQL_PASSWD="P@ssword1"
 ENV ACCEPT_EULA="Y"
 ENV SA_PASSWORD="${SQL_PASSWD}"
 ENV MSSQL_PID="Express"
