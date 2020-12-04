@@ -7,6 +7,7 @@ from django.urls import include, path
 from .views import CategoriesView
 from .views import SuppliersView
 from .views import ProductsView
+from .views import ProductsFullView
 
 
 app_name = "myapi"
@@ -24,7 +25,9 @@ urlpatterns = [
     path('Suppliers/', SuppliersView.as_view()),
     path('Suppliers/<int:pk>', SuppliersView.as_view()),
     path('Products/', ProductsView.as_view()),
-    path('Products/<int:pk>', ProductsView.as_view())
+    path('Products/<int:pk>', ProductsView.as_view()),
+    path('ProductsFull/', ProductsFullView.as_view()),
+    path('ProductsFull/<int:pk>', ProductsFullView.as_view())
     #path('', include(router.urls)),
     #path('api-auth/', include('rest_framework.urls', namespace='rest_framework'))
 ]

@@ -8,6 +8,7 @@ from django.shortcuts import get_object_or_404
 from .serializers import CategoriesSerializer
 from .serializers import ProductsSerializer
 from .serializers import SuppliersSerializer
+from .serializers import ProductsFullSerializer
 
 from .models import Categories
 from .models import Products
@@ -159,3 +160,17 @@ class ProductsView(APIView):
         product = get_object_or_404(Products.objects.all(), pk=pk)
         product.delete()
         return Response({"message": "product with id `{}` has been deleted.".format(pk)},status=204)
+
+
+class ProductsFullView(APIView):
+    def get(self,request,pk=None):
+        if pk is not None:
+            product = get_object_or_404(Products.objects.all(), pk=pk)
+            serializer = ProductsFullSerializer(product, many = False)
+            return Response({"Product":serializer.data})
+        else:
+            products = Products.objects.all()
+            serializer = ProductsFullSerializer(products, many = True)
+            return Response({"Products":serializer.data})
+
+

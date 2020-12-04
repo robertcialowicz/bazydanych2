@@ -32,3 +32,15 @@ class SuppliersSerializer(serializers.HyperlinkedModelSerializer):
         def create(self, validated_data):
             return Suppliers.objects.create(**validated_data)
 
+
+class ProductsFullSerializer(serializers.ModelSerializer):
+    supplierid = SuppliersSerializer(read_only=True)
+    categoryid = CategoriesSerializer(read_only=True)
+
+    class Meta:
+        model = Products
+        fields = ('productid','productname','supplierid','categoryid','quantityperunit','unitprice','unitsinstock','unitsonorder','reorderlevel','discontinued')
+        
+        def create(self, validated_data):
+            return Products.objects.create(**validated_data)
+
