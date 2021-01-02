@@ -184,6 +184,9 @@ class Orders(models.Model):
     shipcountry = models.CharField(db_column='ShipCountry', max_length=15, blank=True, null=True)  # Field name made lowercase.
     orderdetailsFK = models.ManyToManyField(Products, through='OrderDetails', related_name='Products')
 
+    def __str__(self):
+        return ("Order no. " + str(self.orderid))
+
     class Meta:
         managed = False
         db_table = 'Orders'
@@ -198,6 +201,9 @@ class OrderDetails(models.Model):
     quantity = models.SmallIntegerField(db_column='Quantity')  # Field name made lowercase.
     discount = models.FloatField(db_column='Discount')  # Field name made lowercase.
     orderdetailid = models.AutoField(primary_key=True)  # Field name made lowercase.
+
+    def __str__(self):
+        return ("Product " + str(self.productid) + " within " + str(self.orderid))
 
     class Meta:
         managed = False

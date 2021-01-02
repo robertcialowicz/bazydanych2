@@ -2,17 +2,17 @@ version: '3'
 
 services:
   sqlserver:
-    build: sqlserver
-    #volumes:
-    #  - ./sqlserver/data:/var/opt/mssql
+    build: sqlserver/
+    volumes:
+      - ./sqlserver/data:/var/opt/mssql
     ports:
       - "1433:1433"
   web:
-    build: web
+    build: web/
     volumes:
       - .:/code
     ports:
       - "8000:8000"
     depends_on:
       - sqlserver
-    command: ["./wait-for-it.sh", "sqlserver:1433", "-t", "100", "--", "python3", "manage.py", "runserver", "0.0.0.0:8000"]
+    command: ["./wait-for-it.sh", "sqlserver:1433", "-t", "100", "--", "/code/script.sh"]

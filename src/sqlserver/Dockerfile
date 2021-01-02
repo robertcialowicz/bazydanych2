@@ -23,4 +23,5 @@ ARG NORTHWIND_SQL="/usr/share/instnwnd.sql"
 RUN wget "${NORTHWIND_SQL_GITHUB}" -O "${NORTHWIND_SQL}"
 ADD entrypoint.sh /usr/share/entrypoint.sh
 ADD import-northwind.sh /usr/share/import-northwind.sh
+ADD dbFix.sql usr/share/dbFix.sql
 ENTRYPOINT [ "/usr/share/entrypoint.sh" ]
