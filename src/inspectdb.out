@@ -97,6 +97,7 @@ class OrderDetails(models.Model):
     unitprice = models.DecimalField(db_column='UnitPrice', max_digits=19, decimal_places=4)  # Field name made lowercase.
     quantity = models.SmallIntegerField(db_column='Quantity')  # Field name made lowercase.
     discount = models.FloatField(db_column='Discount')  # Field name made lowercase.
+    orderdetailid = models.AutoField(primary_key=True)
 
     class Meta:
         managed = False

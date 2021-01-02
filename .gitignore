@@ -1,0 +1,4 @@
+~/.vscode-root/*
+src/myapi/__pycache__/*
+src/myapi/migrations/__pycache__/*
+src/myapp/__pycache__/*

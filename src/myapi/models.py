@@ -6,7 +6,6 @@ from django.db import models
 
 
 class Categories(models.Model):
-
     categoryid = models.AutoField(db_column='CategoryID', primary_key=True)  # Field name made lowercase.
     categoryname = models.CharField(db_column='CategoryName', max_length=15)  # Field name made lowercase.
     description = models.TextField(db_column='Description', blank=True, null=True)  # Field name made lowercase.
@@ -25,6 +24,9 @@ class Shippers(models.Model):
     companyname = models.CharField(db_column='CompanyName', max_length=40)  # Field name made lowercase.
     phone = models.CharField(db_column='Phone', max_length=24, blank=True, null=True)  # Field name made lowercase.
 
+    def __str__(self):
+        return self.companyname
+
     class Meta:
         managed = False
         db_table = 'Shippers'
@@ -32,7 +34,7 @@ class Shippers(models.Model):
 
 class Customercustomerdemo(models.Model):
     customerid = models.ForeignKey('Customers', on_delete=models.CASCADE, db_column='CustomerID', primary_key=True)  # Field name made lowercase.
-    customertypeid = models.ForeignKey('Customerdemographics', on_delete=models.CASCADE, db_column='CustomerTypeID')  # Field name made lowercase.
+    customertypeid = models.ForeignKey('Customerdemographics', on_delete=models.DO_NOTHING, db_column='CustomerTypeID')  # Field name made lowercase.
 
     class Meta:
         managed = False
@@ -61,7 +63,10 @@ class Customers(models.Model):
     country = models.CharField(db_column='Country', max_length=15, blank=True, null=True)  # Field name made lowercase.
     phone = models.CharField(db_column='Phone', max_length=24, blank=True, null=True)  # Field name made lowercase.
     fax = models.CharField(db_column='Fax', max_length=24, blank=True, null=True)  # Field name made lowercase.
-    customer_customer_demo = models.ManyToManyField(CustomerDemographics)
+    #customer_customer_demo = models.ManyToManyField(CustomerDemographics)
+
+    def __str__(self):
+        return self.companyname
 
     class Meta:
         managed = False
@@ -80,7 +85,7 @@ class Region(models.Model):
 class Territories(models.Model):
     territoryid = models.CharField(db_column='TerritoryID', primary_key=True, max_length=20)  # Field name made lowercase.
     territorydescription = models.CharField(db_column='TerritoryDescription', max_length=50)  # Field name made lowercase.
-    regionid = models.ForeignKey(Region, on_delete=models.CASCADE, db_column='RegionID')  # Field name made lowercase.
+    regionid = models.ForeignKey(Region, on_delete=models.DO_NOTHING, db_column='RegionID')  # Field name made lowercase.
 
     class Meta:
         managed = False
@@ -105,8 +110,10 @@ class Employees(models.Model):
     notes = models.TextField(db_column='Notes', blank=True, null=True)  # Field name made lowercase.
     reportsto = models.ForeignKey('self', on_delete=models.DO_NOTHING, db_column='ReportsTo', blank=True, null=True)  # Field name made lowercase.
     photopath = models.CharField(db_column='PhotoPath', max_length=255, blank=True, null=True)  # Field name made lowercase.
-    territories = models.ManyToManyField(Territories)
+    territories = models.ManyToManyField(Territories, through='EmployeeTerritories')
 
+    def __str__(self):
+        return (self.firstname + ' ' + self.lastname)
 
     class Meta:
         managed = False
@@ -141,8 +148,8 @@ class Suppliers(models.Model):
 class Products(models.Model):
     productid = models.AutoField(db_column='ProductID', primary_key=True)  # Field name made lowercase.
     productname = models.CharField(db_column='ProductName', max_length=40)  # Field name made lowercase.
-    supplierid = models.ForeignKey(Suppliers, on_delete=models.CASCADE, db_column='SupplierID', blank=True, null=True)  # Field name made lowercase.
-    categoryid = models.ForeignKey(Categories, on_delete=models.CASCADE, db_column='CategoryID', blank=True, null=True)  # Field name made lowercase.
+    supplierid = models.ForeignKey(Suppliers, on_delete=models.DO_NOTHING, db_column='SupplierID', blank=True, null=True)  # Field name made lowercase.
+    categoryid = models.ForeignKey(Categories, on_delete=models.DO_NOTHING, db_column='CategoryID', blank=True, null=True)  # Field name made lowercase.
     quantityperunit = models.CharField(db_column='QuantityPerUnit', max_length=20, blank=True, null=True)  # Field name made lowercase.
     unitprice = models.DecimalField(db_column='UnitPrice', max_digits=19, decimal_places=4, blank=True, null=True)  # Field name made lowercase.
     unitsinstock = models.SmallIntegerField(db_column='UnitsInStock', blank=True, null=True)  # Field name made lowercase.
@@ -156,17 +163,18 @@ class Products(models.Model):
     class Meta:
         managed = False
         db_table = 'Products'
+        verbose_name_plural = 'Products'
 
 
 
 class Orders(models.Model):
     orderid = models.AutoField(db_column='OrderID', primary_key=True)  # Field name made lowercase.
-    customerid = models.ForeignKey(Customers, on_delete=models.CASCADE, db_column='CustomerID', blank=True, null=True)  # Field name made lowercase.
-    employeeid = models.ForeignKey(Employees, on_delete=models.CASCADE, db_column='EmployeeID', blank=True, null=True)  # Field name made lowercase.
+    customerid = models.ForeignKey(Customers, on_delete=models.DO_NOTHING, db_column='CustomerID', blank=True, null=True)  # Field name made lowercase.
+    employeeid = models.ForeignKey(Employees, on_delete=models.DO_NOTHING, db_column='EmployeeID', blank=True, null=True)  # Field name made lowercase.
     orderdate = models.DateTimeField(db_column='OrderDate', blank=True, null=True)  # Field name made lowercase.
     requireddate = models.DateTimeField(db_column='RequiredDate', blank=True, null=True)  # Field name made lowercase.
     shippeddate = models.DateTimeField(db_column='ShippedDate', blank=True, null=True)  # Field name made lowercase.
-    shipvia = models.ForeignKey(Shippers, on_delete=models.CASCADE, db_column='ShipVia', blank=True, null=True)  # Field name made lowercase.
+    shipvia = models.ForeignKey(Shippers, on_delete=models.DO_NOTHING, db_column='ShipVia', blank=True, null=True)  # Field name made lowercase.
     freight = models.DecimalField(db_column='Freight', max_digits=19, decimal_places=4, blank=True, null=True)  # Field name made lowercase.
     shipname = models.CharField(db_column='ShipName', max_length=40, blank=True, null=True)  # Field name made lowercase.
     shipaddress = models.CharField(db_column='ShipAddress', max_length=60, blank=True, null=True)  # Field name made lowercase.
@@ -174,25 +182,27 @@ class Orders(models.Model):
     shipregion = models.CharField(db_column='ShipRegion', max_length=15, blank=True, null=True)  # Field name made lowercase.
     shippostalcode = models.CharField(db_column='ShipPostalCode', max_length=10, blank=True, null=True)  # Field name made lowercase.
     shipcountry = models.CharField(db_column='ShipCountry', max_length=15, blank=True, null=True)  # Field name made lowercase.
-    #order_details = models.ManyToManyField(Products)
+    orderdetailsFK = models.ManyToManyField(Products, through='OrderDetails', related_name='Products')
 
     class Meta:
         managed = False
         db_table = 'Orders'
+        verbose_name_plural = 'Orders'
 
 
 
 class OrderDetails(models.Model):
-    orderid = models.ForeignKey(Orders, on_delete=models.CASCADE, db_column='OrderID', primary_key=True)  # Field name made lowercase.
+    orderid = models.ForeignKey(Orders, on_delete=models.CASCADE, db_column='OrderID')  # Field name made lowercase.
     productid = models.ForeignKey(Products, on_delete=models.CASCADE, db_column='ProductID')  # Field name made lowercase.
     unitprice = models.DecimalField(db_column='UnitPrice', max_digits=19, decimal_places=4)  # Field name made lowercase.
     quantity = models.SmallIntegerField(db_column='Quantity')  # Field name made lowercase.
     discount = models.FloatField(db_column='Discount')  # Field name made lowercase.
-
+    orderdetailid = models.AutoField(primary_key=True)  # Field name made lowercase.
 
     class Meta:
         managed = False
         db_table = 'Order Details'
+        verbose_name_plural = 'Order details'
         unique_together = (('orderid', 'productid'),)
 
 
