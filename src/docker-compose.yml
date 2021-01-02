@@ -15,4 +15,4 @@ services:
       - "8000:8000"
     depends_on:
       - sqlserver
-    command: ["./wait-for-it.sh", "sqlserver:1433", "-t", "100", "--", "/code/script.sh"]
+    command: ["./web/wait-for-it.sh", "sqlserver:1433", "-t", "100", "--", "/code/web/script.sh"]
