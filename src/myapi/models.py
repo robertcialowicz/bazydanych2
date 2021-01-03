@@ -195,8 +195,8 @@ class Orders(models.Model):
 
 
 class OrderDetails(models.Model):
-    orderid = models.ForeignKey(Orders, on_delete=models.CASCADE, db_column='OrderID')  # Field name made lowercase.
-    productid = models.ForeignKey(Products, on_delete=models.CASCADE, db_column='ProductID')  # Field name made lowercase.
+    orderid = models.ForeignKey(Orders, on_delete=models.DO_NOTHING, db_column='OrderID')  # Field name made lowercase.
+    productid = models.ForeignKey(Products, on_delete=models.DO_NOTHING, db_column='ProductID')  # Field name made lowercase.
     unitprice = models.DecimalField(db_column='UnitPrice', max_digits=19, decimal_places=4)  # Field name made lowercase.
     quantity = models.SmallIntegerField(db_column='Quantity')  # Field name made lowercase.
     discount = models.FloatField(db_column='Discount')  # Field name made lowercase.
