@@ -1,0 +1,8 @@
+TODO:
+1.   Requireddate musi być minimum ileś większe niż orderdate | przy składaniu nowego zamówienia
+2.   Pod orderdetails stowrzyć order summary z kwotą całkowitą, tj. ilość produktów razy (cena pomniejszona o zniżkę)
+3.   Nie może być dwa razy ten sam produkt dwa razy w jednym zamówieniu
+4.   Zmniejszać unitsinstock o wprowadzone quantity dla każdego z produktów w orderdetails
+5.   Dokumentacja
+5.1. Raw sql queries do sprawozdania
+5.2. Początki z django i modelem
