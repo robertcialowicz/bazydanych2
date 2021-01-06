@@ -27,12 +27,18 @@ class OrderDetailsInlineFormSet(forms.models.BaseInlineFormSet):
             saved_instances.save()
         return saved_instances
     def clean(self):
+        setOfProducts = set()
         for productForm in self.cleaned_data:
             reservedQuantity = productForm.get('quantity')
             product = productForm.get('productid')
             unitsInStock = product.unitsinstock
             price = productForm.get('unitprice')
             discount = productForm.get('discount')
+            #check if the same product was not chosen twice
+            if product in setOfProducts:
+                raise forms.ValidationError("Product " + str(product) + " was added more than once!")
+            else:
+                setOfProducts.add(product)
             #check if unitprice is greater than 0
             if price <= 0:
                 raise forms.ValidationError("Unitprice for product " + str(product) + " has to be greater than 0!")
