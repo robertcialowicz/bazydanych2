@@ -14,8 +14,19 @@ admin.site.unregister(Group)
 
 #class created to validate inline objects, in this case - Products
 class OrderDetailsInlineFormSet(forms.models.BaseInlineFormSet):
+    def save_new(self, form, commit=True):
+        saved_instances = super(OrderDetailsInlineFormSet, self).save_new(form, commit=False)
+        if commit:
+            saved_instances.productid.unitsinstock -= saved_instances.quantity
+            saved_instances.productid.save()
+            saved_instances.save()
+        return saved_instances
+    def save_existing(self, commit=True):
+        saved_instances = super(OrderDetailsInlineFormSet, self).save_existing(form, commit=False)
+        if commit:
+            saved_instances.save()
+        return saved_instances
     def clean(self):
-        #super(OrderDetailsInlineForm, self).clean()
         for productForm in self.cleaned_data:
             reservedQuantity = productForm.get('quantity')
             product = productForm.get('productid')
