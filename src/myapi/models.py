@@ -184,6 +184,12 @@ class Orders(models.Model):
     shipcountry = models.CharField(db_column='ShipCountry', max_length=15, blank=True, null=True)  # Field name made lowercase.
     orderdetailsFK = models.ManyToManyField(Products, through='OrderDetails', related_name='Products')
 
+    def summary(self):
+        sum = 0
+        for item in self.orderdetailsFK.through.objects.filter(orderid=self.orderid):
+            sum += float(item.unitprice) * float(item.quantity) * (1 - float(item.discount))
+        return "${0}".format(round(sum, 2))
+
     def __str__(self):
         return ("Order no. " + str(self.orderid))
 
