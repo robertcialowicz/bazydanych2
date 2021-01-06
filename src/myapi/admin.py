@@ -76,6 +76,11 @@ class OrdersForm(forms.ModelForm):
 class OrdersAdmin(admin.ModelAdmin):
     form = OrdersForm
     inlines = (OrderDetailsInline, )
+    fieldsets = [
+        (None, {'fields': ['customerid', 'employeeid', 'orderdate', 'requireddate', 'shippeddate', 'shipvia', 'freight', 'shipname', 'shipaddress', 'shipcity', 'shipregion', 'shippostalcode', 'shipcountry', ]}),
+        ('Order Summary', {'fields': ['summary', ]}),
+    ]
+    readonly_fields = ('summary', )
 
 admin.site.register(Orders, OrdersAdmin)
 
