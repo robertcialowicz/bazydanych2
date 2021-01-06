@@ -2,6 +2,7 @@ from django.contrib import admin
 from django.contrib.auth.models import User, Group
 from django.core.exceptions import ValidationError
 from django import forms
+import datetime
 
 from .models import Products
 from .models import OrderDetails
@@ -66,8 +67,8 @@ class OrdersForm(forms.ModelForm):
         orderDate = self.cleaned_data.get('orderdate')
         requiredDate = self.cleaned_data.get('requireddate')
         #order date validation
-        if orderDate >= requiredDate:
-            raise forms.ValidationError("Requirred date cannot be before Orderdate!")
+        if orderDate >= (requiredDate - datetime.timedelta(days=1)):
+            raise forms.ValidationError("Orderdate must be at least 24 hours before Required date!")
         return self.cleaned_data
 
 
