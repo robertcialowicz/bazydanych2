@@ -22,11 +22,11 @@ class OrderDetailsInlineFormSet(forms.models.BaseInlineFormSet):
             saved_instances.productid.save()
             saved_instances.save()
         return saved_instances
-    def save_existing(self, commit=True):
-        saved_instances = super(OrderDetailsInlineFormSet, self).save_existing(form, commit=False)
-        if commit:
-            saved_instances.save()
-        return saved_instances
+    #def save_existing(self, commit=True):
+    #    saved_instances = super(OrderDetailsInlineFormSet, self).save_existing(form, commit=False)
+    #    if commit:
+    #        saved_instances.save()
+    #    return saved_instances
     def clean(self):
         setOfProducts = set()
         for productForm in self.cleaned_data:
