@@ -1,0 +1,5 @@
+TODO:
+1.   Pod orderdetails stowrzyć order summary z kwotą całkowitą, tj. ilość produktów razy (cena pomniejszona o zniżkę) | (optional)
+
+2.   Dokumentacja
+2.1. Podzielić rozdziały

@@ -2,6 +2,7 @@ from django.contrib import admin
 from django.contrib.auth.models import User, Group
 from django.core.exceptions import ValidationError
 from django import forms
+import datetime
 
 from .models import Products
 from .models import OrderDetails
@@ -14,14 +15,31 @@ admin.site.unregister(Group)
 
 #class created to validate inline objects, in this case - Products
 class OrderDetailsInlineFormSet(forms.models.BaseInlineFormSet):
+    def save_new(self, form, commit=True):
+        saved_instances = super(OrderDetailsInlineFormSet, self).save_new(form, commit=False)
+        if commit:
+            saved_instances.productid.unitsinstock -= saved_instances.quantity
+            saved_instances.productid.save()
+            saved_instances.save()
+        return saved_instances
+    #def save_existing(self, commit=True):
+    #    saved_instances = super(OrderDetailsInlineFormSet, self).save_existing(form, commit=False)
+    #    if commit:
+    #        saved_instances.save()
+    #    return saved_instances
     def clean(self):
-        #super(OrderDetailsInlineForm, self).clean()
+        setOfProducts = set()
         for productForm in self.cleaned_data:
             reservedQuantity = productForm.get('quantity')
             product = productForm.get('productid')
             unitsInStock = product.unitsinstock
             price = productForm.get('unitprice')
             discount = productForm.get('discount')
+            #check if the same product was not chosen twice
+            if product in setOfProducts:
+                raise forms.ValidationError("Product " + str(product) + " was added more than once!")
+            else:
+                setOfProducts.add(product)
             #check if unitprice is greater than 0
             if price <= 0:
                 raise forms.ValidationError("Unitprice for product " + str(product) + " has to be greater than 0!")
@@ -49,8 +67,8 @@ class OrdersForm(forms.ModelForm):
         orderDate = self.cleaned_data.get('orderdate')
         requiredDate = self.cleaned_data.get('requireddate')
         #order date validation
-        if orderDate >= requiredDate:
-            raise forms.ValidationError("Requirred date cannot be before Orderdate!")
+        if orderDate >= (requiredDate - datetime.timedelta(days=1)):
+            raise forms.ValidationError("Orderdate must be at least 24 hours before Required date!")
         return self.cleaned_data
 
 
