@@ -25,6 +25,32 @@ SECRET_KEY = '13ycz2d4)_cozm%n9qyq8tg9#f=zy)ym%g6ngzry^d)8vq$5&e'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
+
+LOGGING = {
+    'version': 1,
+    'filters': {
+        'require_debug_true': {
+            '()': 'django.utils.log.RequireDebugTrue',
+        }
+    },
+    'handlers': {
+        'console': {
+            'level': 'DEBUG',
+            'filters': ['require_debug_true'],
+            'class': 'logging.StreamHandler',
+        }
+    },
+    'loggers': {
+        'django.db.backends': {
+            'level': 'DEBUG',
+            'handlers': ['console'],
+        }
+    }
+}
+
+
+
+
 ALLOWED_HOSTS = [
     '10.71.130.157',
     '0.0.0.0',
