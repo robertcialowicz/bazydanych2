@@ -29,26 +29,27 @@ class OrderDetailsInlineFormSet(forms.models.BaseInlineFormSet):
     #    return saved_instances
     def clean(self):
         setOfProducts = set()
-        for productForm in self.cleaned_data:
-            reservedQuantity = productForm.get('quantity')
-            product = productForm.get('productid')
-            unitsInStock = product.unitsinstock
-            price = productForm.get('unitprice')
-            discount = productForm.get('discount')
-            #check if the same product was not chosen twice
-            if product in setOfProducts:
-                raise forms.ValidationError("Product " + str(product) + " was added more than once!")
-            else:
-                setOfProducts.add(product)
-            #check if unitprice is greater than 0
-            if price <= 0:
-                raise forms.ValidationError("Unitprice for product " + str(product) + " has to be greater than 0!")
-            #check if discount is between 0 and 1
-            if discount < 0 or discount > 1:
-                raise forms.ValidationError("Discount for product " + str(product) + " has to be value between 0 and 1!")
-            #check product quantity availability
-            if reservedQuantity > unitsInStock:
-                raise forms.ValidationError("Maximum quantity for product " + str(product) + " is " + str(unitsInStock) + "!")
+        if(self.is_valid()):
+            for productForm in self.cleaned_data:
+                reservedQuantity = productForm.get('quantity')
+                product = productForm.get('productid')
+                unitsInStock = product.unitsinstock
+                price = productForm.get('unitprice')
+                discount = productForm.get('discount')
+                #check if the same product was not chosen twice
+                if product in setOfProducts:
+                    raise forms.ValidationError("Product " + str(product) + " was added more than once!")
+                else:
+                    setOfProducts.add(product)
+                #check if unitprice is greater than 0
+                if price <= 0:
+                    raise forms.ValidationError("Unitprice for product " + str(product) + " has to be greater than 0!")
+                #check if discount is between 0 and 1
+                if discount < 0 or discount > 1:
+                    raise forms.ValidationError("Discount for product " + str(product) + " has to be value between 0 and 1!")
+                #check product quantity availability
+                if reservedQuantity > unitsInStock:
+                    raise forms.ValidationError("Maximum quantity for product " + str(product) + " is " + str(unitsInStock) + "!")
 
 
 #representation of orderdetails inline, used in Products and Orders
@@ -56,6 +57,7 @@ class OrderDetailsInline(admin.TabularInline):
     model = OrderDetails
     formset = OrderDetailsInlineFormSet
     extra = 0
+    can_delete = True
 
 
 #class created to validate main object being created - Order
