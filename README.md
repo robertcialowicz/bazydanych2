@@ -3,14 +3,22 @@
 Python + Django + MSSQL + Northwind
 ## Authors:
 Chwała Paweł <pchwala@student.agh.edu.pl>
+
 Ciałowicz Robert <robcial@student.agh.edu.pl>
+
 Kozaczkiewicz Łukasz <kozaczki@student.agh.edu.pl>
+
 Szpila Magdalena <mszpila@student.agh.edu.pl>
+
 ## Struktura projektu:
  -> `./docu` dokumentacja projektu, przewodnik po projekcie
+ 
  -> `./meeting_minutes` notatki ze spotkań
+ 
  -> `./presentations` prezentacje pokazywane podczas zajęć
+ 
  -> `./src` pliki źródłowe projektu
+ 
  ## Opis
 Aplikacja napisana w języku Python z wykorzystaniem Django Rest Framework.
 W projekcie wykorzystano serwer bazy danych MSSql.
