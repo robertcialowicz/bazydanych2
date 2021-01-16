@@ -1,0 +1,8 @@
+Lab05 (09-01-2020):
+ - ponumerować strony w raporcie
+ - za każdym razem pobieramy całą tabelę pracowników, jest to defaultowe zachowanie django -> poszukać pomysłu na optymalizację
+ - wyciągnąć wnioski z generowanych zapytań sqlowych i umieścić je w raporcie
+ - stworzyć raporty (lepiej mniej a lepiej i różniej :) ), przykłady z inncyh grup:
+    - orders with at least one product in category
+    - orders per supplier
+    - employee for suppliers / suppliers for employees
