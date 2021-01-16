@@ -92,3 +92,37 @@ class ProductsAdmin(admin.ModelAdmin):
     inlines = (OrderDetailsInline, )
 
 admin.site.register(Products, ProductsAdmin)
+
+##################################
+### custorm reports start here ###
+##################################
+
+#proxy class
+class OrdersProxy(Orders):
+    class Meta:
+        verbose_name_plural = 'Orders Reports'
+        proxy = True
+    
+    def getproducts(self):
+        return ", ".join([
+            product.productname for product in self.orderdetailsFK.all()
+        ])
+    getproducts.short_description = "Products"
+
+    def getcategories(self):
+        return ", ".join([
+            product.categoryid.categoryname for product in self.orderdetailsFK.all()
+        ])
+    getcategories.short_description = "Categories"
+
+    def getsuppliers(self):
+        return ", ".join([
+            product.supplierid.companyname for product in self.orderdetailsFK.all()
+        ])
+    getsuppliers.short_description = "Suppliers"
+
+class OrdersProxyAdmin(admin.ModelAdmin):
+    list_display = ("orderid", 'customerid', 'orderdate', 'getproducts', 'getcategories', 'getsuppliers')
+    list_filter = ("orderdetailsFK__categoryid", "orderdetailsFK__supplierid")
+
+admin.site.register(OrdersProxy, OrdersProxyAdmin)
