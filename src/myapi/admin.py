@@ -122,7 +122,9 @@ class OrdersProxy(Orders):
     getsuppliers.short_description = "Suppliers"
 
 class OrdersProxyAdmin(admin.ModelAdmin):
+    list_per_page = 10
     list_display = ("orderid", 'customerid', 'orderdate', 'getproducts', 'getcategories', 'getsuppliers')
     list_filter = ("orderdetailsFK__categoryid", "orderdetailsFK__supplierid")
+    list_select_related = ('customerid',)
 
 admin.site.register(OrdersProxy, OrdersProxyAdmin)
