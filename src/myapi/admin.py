@@ -105,34 +105,27 @@ class OrdersProxy(Orders):
 
     def __init__(self, *args, **kwargs):
         super(Orders, self).__init__(*args, **kwargs)
-        self.products = self.orderdetailsFK.prefetch_related('Products').select_related('supplierid', 'categoryid')
+        self.od = self.orderdetailsFK.through.objects.select_related('orderid', 'productid', 'productid__supplierid', 'productid__categoryid').only('orderid', 'orderid__orderid', 'productid', 'productid__supplierid', 'productid__supplierid__companyname', 'productid__categoryid__categoryname', 'productid__productname').filter(orderid__orderid=self.orderid)
 
     def getproducts(self):
-        return ", ".join([
-            product.productname for product in self.products
-        ])
+        return ", ".join([p.productid.productname for p in self.od])
     getproducts.short_description = "Products"
 
     def getcategories(self):
-        return ", ".join([
-            product.categoryid.categoryname for product in self.products
-        ])
+        distinct_categories = set([p.productid.categoryid.categoryname for p in self.od])
+        return ", ".join([category for category in distinct_categories])
     getcategories.short_description = "Categories"
 
     def getsuppliers(self):
-        return ", ".join([
-            product.supplierid.companyname for product in self.products
-        ])
+        distinct_suppliers = set([p.productid.supplierid.companyname for p in self.od])
+        return ", ".join([supplier for supplier in distinct_suppliers])
     getsuppliers.short_description = "Suppliers"
-
-    def getcustomername(self):
-        return self.customerid.companyname
-    getcustomername.short_description = "Customer"
 
 class OrdersProxyAdmin(admin.ModelAdmin):
     list_per_page = 10
-    list_display = ('orderid', 'getcustomername', 'orderdate', 'getproducts', 'getcategories', 'getsuppliers')
+    list_display = ('orderid', 'customerid', 'orderdate', 'getproducts', 'getcategories', 'getsuppliers')
     list_filter = ('orderdetailsFK__categoryid__categoryname', 'orderdetailsFK__supplierid__companyname')
+    list_select_related = ['customerid']
 
 admin.site.register(OrdersProxy, OrdersProxyAdmin)
 
