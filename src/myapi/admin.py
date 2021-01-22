@@ -102,29 +102,37 @@ class OrdersProxy(Orders):
     class Meta:
         verbose_name_plural = 'Orders Reports'
         proxy = True
-    
+
+    def __init__(self, *args, **kwargs):
+        super(Orders, self).__init__(*args, **kwargs)
+        self.products = self.orderdetailsFK.prefetch_related('Products').select_related('supplierid', 'categoryid')
+
     def getproducts(self):
         return ", ".join([
-            product.productname for product in self.orderdetailsFK.all()
+            product.productname for product in self.products
         ])
     getproducts.short_description = "Products"
 
     def getcategories(self):
         return ", ".join([
-            product.categoryid.categoryname for product in self.orderdetailsFK.all()
+            product.categoryid.categoryname for product in self.products
         ])
     getcategories.short_description = "Categories"
 
     def getsuppliers(self):
         return ", ".join([
-            product.supplierid.companyname for product in self.orderdetailsFK.all()
+            product.supplierid.companyname for product in self.products
         ])
     getsuppliers.short_description = "Suppliers"
 
+    def getcustomername(self):
+        return self.customerid.companyname
+    getcustomername.short_description = "Customer"
+
 class OrdersProxyAdmin(admin.ModelAdmin):
     list_per_page = 10
-    list_display = ("orderid", 'customerid', 'orderdate', 'getproducts', 'getcategories', 'getsuppliers')
-    list_filter = ("orderdetailsFK__categoryid", "orderdetailsFK__supplierid")
-    list_select_related = ('customerid',)
+    list_display = ('orderid', 'getcustomername', 'orderdate', 'getproducts', 'getcategories', 'getsuppliers')
+    list_filter = ('orderdetailsFK__categoryid__categoryname', 'orderdetailsFK__supplierid__companyname')
 
 admin.site.register(OrdersProxy, OrdersProxyAdmin)
+
