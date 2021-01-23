@@ -92,3 +92,40 @@ class ProductsAdmin(admin.ModelAdmin):
     inlines = (OrderDetailsInline, )
 
 admin.site.register(Products, ProductsAdmin)
+
+##################################
+### custorm reports start here ###
+##################################
+
+#proxy class
+class OrdersProxy(Orders):
+    class Meta:
+        verbose_name_plural = 'Orders Reports'
+        proxy = True
+
+    def __init__(self, *args, **kwargs):
+        super(Orders, self).__init__(*args, **kwargs)
+        self.od = self.orderdetailsFK.through.objects.select_related('orderid', 'productid', 'productid__supplierid', 'productid__categoryid').only('orderid', 'orderid__orderid', 'productid', 'productid__supplierid', 'productid__supplierid__companyname', 'productid__categoryid__categoryname', 'productid__productname').filter(orderid__orderid=self.orderid)
+
+    def getproducts(self):
+        return ", ".join([p.productid.productname for p in self.od])
+    getproducts.short_description = "Products"
+
+    def getcategories(self):
+        distinct_categories = set([p.productid.categoryid.categoryname for p in self.od])
+        return ", ".join([category for category in distinct_categories])
+    getcategories.short_description = "Categories"
+
+    def getsuppliers(self):
+        distinct_suppliers = set([p.productid.supplierid.companyname for p in self.od])
+        return ", ".join([supplier for supplier in distinct_suppliers])
+    getsuppliers.short_description = "Suppliers"
+
+class OrdersProxyAdmin(admin.ModelAdmin):
+    list_per_page = 10
+    list_display = ('orderid', 'customerid', 'orderdate', 'getproducts', 'getcategories', 'getsuppliers')
+    list_filter = ('orderdetailsFK__categoryid__categoryname', 'orderdetailsFK__supplierid__companyname')
+    list_select_related = ['customerid']
+
+admin.site.register(OrdersProxy, OrdersProxyAdmin)
+
