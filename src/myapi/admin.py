@@ -1,7 +1,9 @@
 from django.contrib import admin
 from django.contrib.auth.models import User, Group
 from django.core.exceptions import ValidationError
+from django.db.models import Prefetch
 from django import forms
+from django.db import models
 import datetime
 
 from .models import Products
@@ -103,29 +105,37 @@ class OrdersProxy(Orders):
         verbose_name_plural = 'Orders Reports'
         proxy = True
 
-    def __init__(self, *args, **kwargs):
-        super(Orders, self).__init__(*args, **kwargs)
-        self.od = self.orderdetailsFK.through.objects.select_related('orderid', 'productid', 'productid__supplierid', 'productid__categoryid').only('orderid', 'orderid__orderid', 'productid', 'productid__supplierid', 'productid__supplierid__companyname', 'productid__categoryid__categoryname', 'productid__productname').filter(orderid__orderid=self.orderid)
-
-    def getproducts(self):
-        return ", ".join([p.productid.productname for p in self.od])
-    getproducts.short_description = "Products"
-
-    def getcategories(self):
-        distinct_categories = set([p.productid.categoryid.categoryname for p in self.od])
-        return ", ".join([category for category in distinct_categories])
-    getcategories.short_description = "Categories"
-
-    def getsuppliers(self):
-        distinct_suppliers = set([p.productid.supplierid.companyname for p in self.od])
-        return ", ".join([supplier for supplier in distinct_suppliers])
-    getsuppliers.short_description = "Suppliers"
-
 class OrdersProxyAdmin(admin.ModelAdmin):
+    def get_queryset(self, request):
+        pref = Prefetch('orderdetailsFK', \
+            Products.objects.select_related('categoryid', 'supplierid') \
+                .only('productid', 'productname', 'categoryid', 'categoryid__categoryname', 'supplierid', 'supplierid__companyname'), to_attr='prod')
+        return super(OrdersProxyAdmin, self).get_queryset(request) \
+            .select_related('customerid') \
+            .prefetch_related(pref) \
+            .only('orderid', 'orderdate', 'customerid', 'customerid__companyname', 'orderdetailsFK__productid', 'orderdetailsFK__productname', \
+                'orderdetailsFK__supplierid', 'orderdetailsFK__supplierid__companyname', 'orderdetailsFK__categoryid', 'orderdetailsFK__categoryid__categoryname')
+
+    def getorderid(self, obj):
+        return obj.orderid
+
+    def getcustomerid(self, obj):
+        return obj.customerid
+
+    def getorderdate(self, obj):
+        return obj.orderdate
+
+    def getproducts(self, obj):
+        return ", ".join([p.productname for p in obj.prod])
+
+    def getcategories(self, obj):
+        return ", ".join([c for c in set([p.categoryid.categoryname for p in obj.prod])])
+
+    def getsuppliers(self, obj):
+        return ", ".join([s for s in set([p.supplierid.companyname for p in obj.prod])])
+
     list_per_page = 10
-    list_display = ('orderid', 'customerid', 'orderdate', 'getproducts', 'getcategories', 'getsuppliers')
-    list_filter = ('orderdetailsFK__categoryid__categoryname', 'orderdetailsFK__supplierid__companyname')
-    list_select_related = ['customerid']
+    list_display = ('getorderid', 'getcustomerid', 'getorderdate', 'getproducts', 'getcategories', 'getsuppliers')
+    list_filter = ("orderdetailsFK__categoryid", "orderdetailsFK__supplierid")
 
 admin.site.register(OrdersProxy, OrdersProxyAdmin)
-
